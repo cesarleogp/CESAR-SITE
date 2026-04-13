@@ -186,6 +186,23 @@
       opacity: 0;
       filter: blur(6px);
     }
+    .hero__cta {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 16px 44px;
+      background: var(--red);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0;
+      filter: blur(4px);
+      transition: background .3s ease;
+    }
+    .hero__cta:hover { background: #a93226; }
+
     .hero__scroll {
       position: absolute;
       bottom: 44px;
@@ -742,6 +759,7 @@
       <p class="hero__sub" id="heroSub">
         Perfeito para times de SaaS, e-commerce<br>e infoprodutos que querem conversão
       </p>
+      <a class="hero__cta" id="heroCta" href="#contato">Quero conversar</a>
     </div>
     <div class="hero__scroll" id="heroScroll">
       <span class="hero__scroll-lbl">scroll</span>
@@ -868,7 +886,7 @@
   </section>
 
   <!-- ── CONTATO ───────────────────────────────────────────────── -->
-  <section class="contact">
+  <section class="contact" id="contato">
     <div class="contact__inner">
       <h2 class="contact__headline rw">Vamos conversar sobre seu produto.</h2>
       <p class="contact__sub rw">
@@ -881,13 +899,17 @@
         </div>
         <div class="contact__field r" data-d="2">
           <label class="contact__lbl">E-mail</label>
-          <input class="contact__input" type="email" placeholder="seu@email.com" required>
+          <input class="contact__input" type="email" placeholder="Seu melhor email" required>
         </div>
         <div class="contact__field r" data-d="3">
+          <label class="contact__lbl">WhatsApp</label>
+          <input class="contact__input" type="tel" placeholder="Seu WhatsApp" required>
+        </div>
+        <div class="contact__field r" data-d="4">
           <label class="contact__lbl">Projeto</label>
           <textarea class="contact__textarea" rows="4" placeholder="Me conta o que você tem em mente..." required></textarea>
         </div>
-        <button class="contact__btn r" data-d="4" type="submit">Enviar mensagem</button>
+        <button class="contact__btn r" data-d="5" type="submit">Enviar formulário</button>
       </form>
       <p class="contact__disclaimer rw">Sem spam e sem compromisso. Garanto.</p>
     </div>
@@ -917,6 +939,9 @@
     setTimeout(() => {
       document.getElementById('heroSub').style.animation = 'heroFadeBlur .9s ease forwards';
     }, 820);
+    setTimeout(() => {
+      document.getElementById('heroCta').style.animation = 'heroFadeBlur .7s ease forwards';
+    }, 1000);
     setTimeout(() => {
       document.getElementById('heroScroll').style.animation = 'heroFadeBlur .6s ease forwards';
     }, 1300);
@@ -1111,7 +1136,7 @@
       requestAnimationFrame(raf);
     })();
 
-    const hoverables = 'a, button, input, textarea, label, .works__card, .about__portrait, .testi__card, .contact__btn, .nav__logo';
+    const hoverables = 'a, button, input, textarea, label, .works__card, .about__portrait, .testi__card, .contact__btn, .hero__cta, .nav__logo';
     document.querySelectorAll(hoverables).forEach(el => {
       el.addEventListener('mouseenter', () => ring.classList.add('hover'));
       el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
@@ -1122,6 +1147,20 @@
   document.getElementById('contactForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = this.querySelector('.contact__btn');
+    const inputs = this.querySelectorAll('input, textarea');
+
+    const body = new FormData();
+    body.append('entry.968292173',  inputs[0].value); // Nome
+    body.append('entry.1180300920', inputs[1].value); // Email
+    body.append('entry.1201636765', inputs[2].value); // WhatsApp
+    body.append('entry.1006740412', inputs[3].value); // Projeto
+
+    fetch('https://docs.google.com/forms/d/e/1FAIpQLSeOvwukD8n6DUu_iaM3Svp-Ja0DoZPi3TfaT4kOeMNjzwnETw/formResponse', {
+      method: 'POST',
+      mode: 'no-cors',
+      body: body,
+    });
+
     btn.textContent = 'Mensagem enviada ✓';
     btn.style.background = '#27ae60';
     btn.disabled = true;
