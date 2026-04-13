@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>O César Designer — Landing Pages & Criativos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,13 +21,21 @@
       --sans:      'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      /* iOS overscroll: topo mostra preto (hero), fundo mostra preto (contato) */
+      background: var(--black);
+      overscroll-behavior: none;
+    }
 
     body {
       font-family: var(--sans);
       background: var(--off-white);
       color: var(--black);
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      /* Evita margem branca no iOS */
+      position: relative;
     }
 
     /* ─── GLOBAL CUSTOM CURSOR ─────────────────────────────────── */
@@ -131,6 +139,7 @@
     .hero {
       position: relative;
       height: 100vh;
+      height: 100svh;
       min-height: 640px;
       overflow: hidden;
       background: #000;
@@ -375,6 +384,7 @@
       overflow: hidden;
       background: #1a1a1a;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -615,7 +625,12 @@
     }
 
     /* ─── BLOCK 6 — CONTATO ────────────────────────────────────── */
-    .contact { background: var(--black); color: #fff; padding: 140px 0 100px; }
+    .contact {
+      background: var(--black);
+      color: #fff;
+      padding: 140px 0 100px;
+      padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    }
     .contact__inner { max-width: 760px; margin: 0 auto; padding: 0 48px; }
     .contact__headline {
       font-family: var(--serif);
@@ -722,11 +737,12 @@
 
     /* ─── MOBILE ───────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .nav { padding: 20px 24px; }
+      .nav { padding: 20px 24px; padding-top: calc(20px + env(safe-area-inset-top, 0px)); }
       .pos__inner, .proc__inner, .tension__inner,
       .works__inner, .about__inner, .contact__inner,
       .testi__inner { padding: 0 24px; }
       .hero__content { padding: 0 24px; }
+      .hero { min-height: 560px; }
       .testi { padding: 90px 0 100px; }
       .testi__grid { grid-template-columns: 1fr; }
       .about__inner { grid-template-columns: 1fr; }
@@ -734,6 +750,8 @@
       .about__bgnum { display: none; }
       .about__portrait { max-width: 100%; }
       .works__grid { grid-template-columns: 1fr; }
+      .tension { padding: 100px 24px; }
+      .contact { padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
 
       .proc__diagram { flex-direction: column; align-items: flex-start; }
       .proc__node, .proc__star { flex-direction: row; }
@@ -1015,8 +1033,11 @@
   /* ── SCROLL-LINKED WORD REVEAL ─────────────────────────────── */
   function updateWords() {
     const vh = window.innerHeight;
-    const startY = vh * 0.90; // progress 0 when element top is here
-    const endY   = vh * 0.30; // progress 1 when element top is here
+    const startY = vh * 0.90;
+    const endY   = vh * 0.30;
+
+    // Detecta se o usuário chegou no fundo da página
+    const atBottom = (window.innerHeight + window.scrollY) >= (document.body.scrollHeight - 30);
 
     rwData.forEach(d => {
       const rect = d.el.getBoundingClientRect();
@@ -1025,6 +1046,11 @@
       let progress = (startY - top) / (startY - endY);
       if (progress < 0) progress = 0;
       else if (progress > 1) progress = 1;
+
+      // Se está no fundo da página e o elemento é visível, mostra tudo
+      if (atBottom && rect.top < vh) {
+        progress = 1;
+      }
 
       const target = Math.round(progress * d.words.length);
       if (target === d.shown) return;
