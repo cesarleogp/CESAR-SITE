@@ -23,9 +23,9 @@
 
     html {
       scroll-behavior: smooth;
-      /* iOS overscroll: topo mostra preto (hero), fundo mostra preto (contato) */
       background: var(--black);
-      overscroll-behavior: none;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
     }
 
     body {
@@ -33,7 +33,7 @@
       background: var(--black);
       color: var(--black);
       overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
+      max-width: 100vw;
       position: relative;
     }
 
@@ -146,9 +146,6 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      /* Estica o hero pra cima, cobrindo a safe-area (notch/Dynamic Island) */
-      padding-top: env(safe-area-inset-top, 0px);
-      margin-top: calc(-1 * env(safe-area-inset-top, 0px));
     }
     .hero__bg {
       position: absolute;
