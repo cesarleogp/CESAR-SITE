@@ -709,6 +709,7 @@
       .pos__inner, .proc__inner, .tension__inner,
       .works__inner, .about__inner, .contact__inner,
       .testi__inner { padding: 0 24px; }
+      .hero__content { padding: 0 24px; }
       .testi { padding: 90px 0 100px; }
       .testi__grid { grid-template-columns: 1fr; }
       .about__inner { grid-template-columns: 1fr; }
@@ -895,9 +896,11 @@
   <script>
   /* ── PARALLAX ──────────────────────────────────────────────── */
   const heroBg = document.getElementById('heroBg');
-  window.addEventListener('scroll', () => {
-    heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
-  }, { passive: true });
+  if (!window.matchMedia('(hover: none)').matches) {
+    window.addEventListener('scroll', () => {
+      heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+    }, { passive: true });
+  }
 
   /* ── HERO ENTER ─────────────────────────────────────────────── */
   (function initHero() {
