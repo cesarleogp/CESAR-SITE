@@ -1206,27 +1206,47 @@
     });
   })();
 
-  /* ── FORM ──────────────────────────────────────────────────── */
-  document.getElementById('contactForm').addEventListener('submit', function(e) {
+  /* ── FORM → PIPEFY ─────────────────────────────────────────── */
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const btn = this.querySelector('.contact__btn');
-    const inputs = this.querySelectorAll('input, textarea');
+    const btn     = this.querySelector('.contact__btn');
+    const inputs  = this.querySelectorAll('input, textarea');
+    const [nome, email, whatsapp, projeto] = [...inputs].map(i => i.value.trim());
 
-    const body = new FormData();
-    body.append('entry.968292173',  inputs[0].value); // Nome
-    body.append('entry.1180300920', inputs[1].value); // Email
-    body.append('entry.1201636765', inputs[2].value); // WhatsApp
-    body.append('entry.1006740412', inputs[3].value); // Projeto
-
-    fetch('https://docs.google.com/forms/d/e/1FAIpQLSeOvwukD8n6DUu_iaM3Svp-Ja0DoZPi3TfaT4kOeMNjzwnETw/formResponse', {
-      method: 'POST',
-      mode: 'no-cors',
-      body: body,
-    });
-
-    btn.textContent = 'Mensagem enviada ✓';
-    btn.style.background = '#27ae60';
+    btn.textContent = 'Enviando…';
     btn.disabled = true;
+
+    const mutation = `mutation {
+      createCard(input: {
+        pipe_id: "307103693",
+        fields_attributes: [
+          { field_id: "nome_do_contato",    field_value: ${JSON.stringify(nome)} },
+          { field_id: "email_profissional", field_value: ${JSON.stringify(email)} },
+          { field_id: "telefone",           field_value: ${JSON.stringify(whatsapp)} },
+          { field_id: "projeto",            field_value: ${JSON.stringify(projeto)} }
+        ]
+      }) { card { id } }
+    }`;
+
+    try {
+      const res = await fetch('https://api.pipefy.com/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJQaXBlZnkiLCJpYXQiOjE3NzYxMzI3OTgsImp0aSI6ImZiNDI4ODNhLTk2N2QtNGYwNy04MDJmLTU0OThhMGYzOTY4OSIsInN1YiI6MzA3NzMwMDY4LCJ1c2VyIjp7ImlkIjozMDc3MzAwNjgsImVtYWlsIjoiY2VzYXJtb3Rpb25kZXNpZ25lckBnbWFpbC5jb20ifSwidXNlcl90eXBlIjoiYXV0aGVudGljYXRlZCJ9.G8TTEEhhgfhrISGckXkCetAZZTfS_c_Xs7jjQLEXXfQ5kiGpHGCKlwcbq7Hc8vqB4uN8wsSW0D2HrMOs83OYGQ'
+        },
+        body: JSON.stringify({ query: mutation })
+      });
+      const json = await res.json();
+      if (json.errors) throw new Error(json.errors[0].message);
+      btn.textContent = 'Mensagem enviada ✓';
+      btn.style.background = '#27ae60';
+    } catch (err) {
+      btn.textContent = 'Tente novamente';
+      btn.disabled = false;
+      btn.style.background = '';
+      console.error('Pipefy error:', err);
+    }
   });
   </script>
 </body>
