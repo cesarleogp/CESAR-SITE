@@ -233,7 +233,7 @@
     }
     .hero__wa:hover { background: #25D366; border-color: #25D366; }
     .hero__wa svg { width: 16px; height: 16px; fill: currentColor; }
-    .hero__ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+    .hero__ctas { display: flex; flex-direction: column; align-items: center; gap: 0; }
 
     .hero__scroll {
       position: absolute;
@@ -733,7 +733,8 @@
     .contact__textarea:focus { border-bottom-color: rgba(255,255,255,.7); }
     .contact__textarea { min-height: 110px; }
     .contact__btn {
-      display: inline-block;
+      display: block;
+      margin: 8px auto 0;
       background: var(--red);
       color: #fff;
       border: none;
@@ -744,7 +745,6 @@
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 0;
-      margin-top: 8px;
       transition: background .3s ease;
     }
     .contact__btn:hover { background: #a93226; }
